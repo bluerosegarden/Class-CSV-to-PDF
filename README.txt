@@ -1,3 +1,6 @@
+This uses Tysp (https://typst.app/) to format the class.csv file that you get from the bookmarklet! The Tyspt.exe binary is not created by me. Everything else is however
+
+
 No need to install anything or run anything as admin! Just do the following things:
 
 0) make sure any csv or pdf files you want to keep are moved out of this folder!

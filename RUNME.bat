@@ -1,6 +1,7 @@
 @echo off
 setlocal
 set first=1
+echo Class To CSV Version 2.1.0
 set /p "name=Enter a name for the resulting PDF document: "
 @echo off
 setlocal enabledelayedexpansion
@@ -16,6 +17,7 @@ if %fileCount% lss 2 (
         goto :process
     ) else (
         echo Could not find "classes.csv", are you sure there's one in the folder?
+        set /p "null=press any button to quit"
         goto :end  
     )
 )
@@ -23,30 +25,37 @@ if %fileCount% lss 2 (
 set /p "confirmation=There are multiple csv files that begin with 'classes'. Do you want to merge them together into one final PDF? Your original csv files will not be touched. (Y/N) "
 
 if /i "%confirmation%"=="Y" (
-    :: Create an empty "temp_merged.csv" file
-    type nul > "temp_merged.csv.tmp"
-
-    :: Merge all "classes*.csv" files into "temp_merged.csv" without headers
-    for %%f in (classes*.csv) do (
-        if "%%f" neq "temp_merged.csv.tmp" (
-            type "%%f" | more +1 >> "temp_merged.csv.tmp"
-        )
-    )
-    echo Merging all csv files that begin with "classes"
-    goto :process
-) else (
+    goto :merge
+    ) else (
     echo Merge cancelled, continuing with just classes.csv.
     if exist classes.csv (
-        copy "classes.csv" "temp_merged.csv.tmp"
+        copy "classes.csv" "temp_merged.csv.tmp">nul
         goto :process
     ) else (
         echo Could not find "classes.csv", are you sure there's one in the folder?
+        set /p "null=Press any button to exit"
         goto :end  
     )
 )
+:merge
+:: Create an empty "temp_merged.csv" file
+    type nul > "temp_merged.csv.tmp"
+
+    :: Merge all "classes*.csv" files into "temp_merged.csv" without headers
+    echo Merging all csv files that begin with "classes"
+     >temp_merged.csv.tmp (
+        for %%F in (classes*.csv) do (
+        if defined first (
+        type "%%F"
+        set "first="
+        ) else more +1 "%%F"
+    )
+    )   
+    goto :process
 
 :process
 .\typst.exe compile .\paper-classes.typ "%name%".pdf
 del temp_merged.csv.tmp
 echo %name%.pdf Generated!
+set /p "null=Press any button to exit"
 :end

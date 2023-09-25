@@ -12,6 +12,8 @@ Simply copy all the text in [this file](bookmarklet.js) and add it as a new book
 This uses [Tysp](https://typst.app/) to format the class.csv file that you get from the bookmarklet! The Tyspt.exe binary is not created by me. Everything else is however!
 
 
+Optionally, the script will ask if you want to merge all the csv files that begin with "classes" that are in the folder into a single CSV! Also, included is a seperate .bat file called MERGEFILES.bat that will *only* automatically merge all of the csv files for you!
+
 No need to install anything or run anything as admin! Just do the following things:
 
 

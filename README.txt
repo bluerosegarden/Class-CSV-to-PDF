@@ -6,6 +6,7 @@ No need to install anything or run anything as admin! Just do the following thin
 0) make sure any csv or pdf files you want to keep are moved out of this folder!
 1) Acquire a class.csv of the classes you want (use the bookmarklet js code in bookmarket.js on the JCCC site!)
 2) put the classes.csv file in this folder (named exactly!!)
+2.5) You can also add multiple CSV files to the folder to be compiled into one pdf at the end! However they must all start with "classes", so "classes.csv", "classes2.csv, "classes(3).csv", "classesalphabetaomega.csv" will all work!
 3) doubleclick on the bat file and give the file a name (without the .pdf!)
 4) open your new PDF! (and move to a new location!)
 

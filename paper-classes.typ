@@ -4,7 +4,7 @@
 #set text(12pt)
   #block(smallcaps(it.body))
 ]
-#let results = csv("classes.csv")
+#let results = csv("temp_merged.csv.tmp")
 #let results_noheader = results.slice(1)
 
 #align(center + horizon, 

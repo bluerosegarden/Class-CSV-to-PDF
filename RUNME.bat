@@ -47,6 +47,7 @@ if /i "%confirmation%"=="Y" (
         for %%F in (classes*.csv) do (
         if defined first (
         type "%%F"
+        echo: 
         set "first="
         ) else more +1 "%%F"
     )

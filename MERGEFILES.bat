@@ -31,6 +31,7 @@ if %fileCount% lss 2 (
         if defined first (
         type "%%F"
         set "first="
+        echo:
         ) else more +1 "%%F"
     )
     )

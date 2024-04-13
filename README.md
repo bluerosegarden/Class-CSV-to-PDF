@@ -27,6 +27,7 @@ No need to install anything or run anything as admin! Just do the following thin
 The following files must be present to work:
 - RUNME.bat
 - paper-classes.typ
+- grouped-paper-classes.typ
 - typst.exe
 - classes.csv
 

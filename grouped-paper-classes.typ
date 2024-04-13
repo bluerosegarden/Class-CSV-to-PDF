@@ -17,7 +17,7 @@
   #block(upper(it.body))
 ] 
 
-#let results = csv("classes.csv")
+#let results = csv("temp_merged.csv.tmp")
 #let results_noheader = results.slice(1)
 #let results_noheader = results_noheader.map(x=>{x.map(y=>{y.trim(" ")})})
 

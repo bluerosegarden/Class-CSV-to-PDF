@@ -1,7 +1,13 @@
 @echo off
 setlocal
 set first=1
-echo Class To CSV Version 2.1.0
+echo Class To CSV Version 2.2.0
+
+set /p "grouping=Do you want to group by professor name? (Y/N): "
+if /i "%grouping%"=="Y" (
+    echo Grouping Mode
+)
+
 set /p "name=Enter a name for the resulting PDF document: "
 @echo off
 setlocal enabledelayedexpansion
@@ -55,7 +61,11 @@ if /i "%confirmation%"=="Y" (
     goto :process
 
 :process
-.\typst.exe compile .\paper-classes.typ "%name%".pdf
+if /i "%grouping%"=="Y" (
+    .\typst.exe compile .\grouped-paper-classes.typ "%name%".pdf
+) else (
+    .\typst.exe compile .\paper-classes.typ "%name%".pdf
+)
 del temp_merged.csv.tmp
 echo %name%.pdf Generated!
 set /p "null=Press any button to exit"

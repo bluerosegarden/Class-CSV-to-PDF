@@ -128,7 +128,7 @@ var csv_data = [
 
 		// Combine each column value with comma
 		csv_data.push(
-			`${classInfo.title}, ${classInfo.subj}, ${classInfo.crn}, ${classInfo.hours},${classInfo.instructor}, ${classInfo.email}, ${classInfo.delivery}, ${classInfo.meetingTimes}, ${classInfo.location}, ${classInfo.startend}, ${classInfo.seats}, ${classInfo.waitlist}, ${classInfo.attributes}`
+			`${classInfo.title.replaceAll(",", " ")}, ${classInfo.subj.replaceAll(",", " ")}, ${classInfo.crn.replaceAll(",", " ")}, ${classInfo.hours.replaceAll(",", " ")},${classInfo.instructor.replaceAll(",", " ")}, ${classInfo.email.replaceAll(",", " ")}, ${classInfo.delivery.replace(",", " ")}, ${classInfo.meetingTimes.replaceAll(",", " ")}, ${classInfo.location.replaceAll(",", " ")}, ${classInfo.startend}, ${classInfo.seats}, ${classInfo.waitlist}, ${classInfo.attributes.replaceAll(",", " ")}`
 		);
 	}
 

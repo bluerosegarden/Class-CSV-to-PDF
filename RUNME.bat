@@ -1,7 +1,7 @@
 @echo off
 setlocal
 set first=1
-echo Class To CSV Version 2.2.0
+echo Class To CSV Version 2.3.0
 
 set /p "grouping=Do you want to group by professor name? (Y/N): "
 if /i "%grouping%"=="Y" (

@@ -121,7 +121,7 @@
 
 for key in profDict.keys(){
   let classes = (profDict.at(key).classes)
-  block(breakable: false, below: 32pt)[
+  block(below: 32pt)[
     = #key
     #text(16pt)[
     #profDict.at(key).email
@@ -137,6 +137,7 @@ for key in profDict.keys(){
       [credit hours: #classes.at(course).credit_hours]
       for option in classOptions{
         align(start)[
+          #block(breakable: false)[
         #table(
           columns: (auto, 1fr),
           stroke: (x, y) => (
@@ -154,9 +155,10 @@ for key in profDict.keys(){
   
         )
       ]
+        ]
       }
     }
   ]
-  
+  pagebreak(weak: true)
 }
 )

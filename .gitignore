@@ -1,1 +1,4 @@
-classes.csv
+*.csv
+!example.csv
+*.pdf
+!example.pdf

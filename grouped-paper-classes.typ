@@ -1,10 +1,15 @@
-#set page(paper: "us-letter", margin: (y: 24pt)) 
+
+
 #show heading: it => [
 #set align(center)
 
   #block(smallcaps(it.body))
 ]
 
+#show table: it => [
+  #set text(12pt)
+  #it
+]
 #show heading.where(level:1): it=>[
   #set text(20pt)
   #set align(center)
@@ -21,8 +26,38 @@
 #let results_noheader = results.slice(1)
 #let results_noheader = results_noheader.map(x=>{x.map(y=>{y.trim(" ")})})
 
+#let prevCheckedPage = context here().page()
+
+#let GenClassTableBlock(blockInfo, class) = {
+  align(start)[
+          #block(breakable: false)[
+            #if blockInfo != none{
+              [#blockInfo]
+            }
+          #table(
+          columns: (auto, 1fr),
+          stroke: (x, y) => (
+            left: if x > 0 { 1pt },
+            top: if y > 0 { 1pt },
+          ),
+          [*CRN*], [#class.at(0)],
+          [*Delivery Method*], [#class.at(1)],
+          [*Times*], [#class.at(2)],
+          [*Location*], [#class.at(3)],
+          [*Start-End*], [#class.at(4)],
+          [*Seats Open*], [#class.at(5)],
+          [*Waitlist Slots*], [#class.at(6)],
+          [*Attributes*], [#class.at(7)],
+  
+        )
+      ]
+        ]
+}
+
+
+
 #let groupClasses(classes) = {
-  let classDict = (:)
+  let courseDict = (:)
 
   for class in classes{
     let credit_hours = class.remove(3)
@@ -31,16 +66,18 @@
     let classInfo = class
     
 
-    if classDict.at(course, default:false) == false{
-      classDict.insert(course, (name: name, credit_hours:credit_hours, classOptions: (classInfo,)))
+    if courseDict.at(course, default:false) == false{
+      courseDict.insert(course, (name: name, credit_hours:credit_hours, classOptions: (classInfo,)))
     }
     else{
-      classDict.at(course).classOptions.push(classInfo)
+      courseDict.at(course).classOptions.push(classInfo)
       
     }
   }
-  return classDict
+  return courseDict
 }
+
+
 
 #let groupByProfs(classes) = {
   let profDict = (:)
@@ -54,18 +91,18 @@
         profDict.insert(
           profName, (
             email: profEmail,
-            classes: (classInfo,)
+            courses: (classInfo,)
           )
           
         )
       }
       else{
-        profDict.at(profName).classes.push((classInfo))
+        profDict.at(profName).courses.push((classInfo))
       }
     }
   }
   for key in profDict.keys(){
-    profDict.at(key).classes = groupClasses(profDict.at(key).classes)
+    profDict.at(key).courses = groupClasses(profDict.at(key).courses)
   }
   return profDict
 }
@@ -75,10 +112,12 @@
 #let checkIfSingleCourse(profDict) = {
   let courses = ()
   let course_name = ""
+  let course_credit_hours = ""
   for key in profDict.keys(){
-    for course in profDict.at(key).classes.keys(){
+    for course in profDict.at(key).courses.keys(){
       courses.push(course)
-      course_name = profDict.at(key).classes.at(course).name
+      course_name = profDict.at(key).courses.at(course).name
+      course_credit_hours = profDict.at(key).courses.at(course).credit_hours
     }
 
   }
@@ -93,72 +132,106 @@
       continue
     }
     if previous_course != course{
-      return (false, previous_course, course_name)
+      return (false, previous_course, course_name, course_credit_hours)
     }
     else{
       previous_course = course
     }
   }
 
-  return (true, previous_course, course_name)
+  return (true, previous_course, course_name, course_credit_hours)
 }
 
-#let (is_single_course, single_course, single_course_name) = checkIfSingleCourse(profDict)
+#let (is_single_course, single_course, single_course_name, single_credit_hours) = checkIfSingleCourse(profDict)
 
+#set page(paper: "us-letter", margin: (y: 24pt),
+header: context {
+  if counter(page).get().first() > 1 [
+    #h(1fr)
+    #if is_single_course [#single_course_name (#single_course)]
+  ]
+})
 
-#if is_single_course{
-  
-  align(
-    center, block(
-    below: 40pt
-  )[
-
-    = #text(25pt)[#single_course_name (#single_course)]]
-)
+#let already_printed_className = false
+#if is_single_course{ 
+            align(center, block(below: 40pt)[
+              = #text(25pt)[#single_course_name (#single_course)]
+              #text(18pt)[Credit Hours: #single_credit_hours]
+            ]
+          )
 }
+
+#let prevCheckedPage = state("x", 1)
+
 
 #align(center, 
+  [
+    #for prof_name in profDict.keys(){
+      
+      let new_professor = true
+      let courses = profDict.at(prof_name).courses
+      let email = profDict.at(prof_name).email
+      let new_page = false
+      
+      for course in courses.keys(){
+        let course_name = courses.at(course).name
+        let credit_hours = courses.at(course).credit_hours
+        let first_class_of_course = true
 
-for key in profDict.keys(){
-  let classes = (profDict.at(key).classes)
-  block(below: 32pt)[
-    = #key
-    #text(16pt)[
-    #profDict.at(key).email
-  ]
-  
-    #for course in classes.keys(){
-      let classOptions = classes.at(course).classOptions
-      if is_single_course == false{
-        [
+        
+        for class in courses.at(course).classOptions{
+          context {
+          let courseInfo = []
+          let blockInfo = []          
+          let profInfo = block()[
+                = #text(25pt)[#prof_name]
+                #text(18pt)[#email]]
+          
+          
+            let same_page = here().page() == prevCheckedPage.get()
+            let oneline_info = [🡄 * #prof_name || #course_name (#course) || Credit Hours: #credit_hours *]
 
-          == #classes.at(course).name (#course)]
+            let oneline_info_simple = [🡄* #prof_name *]
+            let courseInfo = [
+              == #course_name (#course)
+              #text(18pt)[Credit Hours: #courses.at(course).credit_hours]
+            ]
+            let blockInfo = []
+            if new_professor {
+              if is_single_course{
+                blockInfo = align(center, block(breakable: false)[
+            #profInfo
+          ])
+         
+              }else {
+              blockInfo = align(center, block(breakable: false)[
+            #profInfo
+            #courseInfo
+          ])
+        }
+            } else if first_class_of_course and not is_single_course{
+                blockInfo = align(center, block(breakable: false)[
+                 #courseInfo
+                ])
+            } else if not same_page{
+              if is_single_course{
+                blockInfo = oneline_info_simple
+              } else {
+              blockInfo = oneline_info
+          }
+            }
+            
+          GenClassTableBlock(blockInfo, class)
+          prevCheckedPage.update(here().page())
+        }
+        
+        new_professor = false
+        first_class_of_course = false
+      } 
       }
-      [credit hours: #classes.at(course).credit_hours]
-      for option in classOptions{
-        align(start)[
-          #block(breakable: false)[
-        #table(
-          columns: (auto, 1fr),
-          stroke: (x, y) => (
-  left: if x > 0 { 1pt },
-  top: if y > 0 { 1pt },
-),
-          [*CRN*], [#option.at(0)],
-          [*Delivery Method*], [#option.at(1)],
-          [*Times*], [#option.at(2)],
-          [*Location*], [#option.at(3)],
-          [*Start-End*], [#option.at(4)],
-          [*Seats Open*], [#option.at(5)],
-          [*Waitlist Slots*], [#option.at(6)],
-          [*Attributes*], [#option.at(7)],
-  
-        )
-      ]
-        ]
-      }
+      
     }
   ]
-  pagebreak(weak: true)
-}
 )
+
+

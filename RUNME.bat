@@ -1,10 +1,10 @@
 @echo off
 setlocal
 set first=1
-echo Class To CSV Version 2.4.1
+echo Class To CSV Version 2.4.2
 
-set /p "grouping=Do you want to group by professor name? (Y/N): "
-if /i "%grouping%"=="Y" (
+set /p "grouping=Do you want to group by professor name? (y/n): "
+if /i "%grouping%"=="y" (
     echo Grouping Mode
 )
 
@@ -20,9 +20,9 @@ for %%f in (classes*.csv) do (
 
 if %fileCount% GTR 1 (
 :: Prompt user for confirmation
-set /p "confirmation=There are multiple csv files that begin with 'classes'. Do you want to merge them together into one final PDF? Your original csv files will not be touched. (Y/N) "
+set /p "confirmation=There are multiple csv files that begin with 'classes'. Do you want to merge them together into one final PDF? Your original csv files will not be touched. (y/n) "
 
-    if /i "%confirmation%"=="Y" (
+    if /i "!confirmation!"=="y" (
         :: dont include the .csv here
         call ./MERGEFILES.bat "input.tmp"
         goto :process
